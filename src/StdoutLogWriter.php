@@ -7,6 +7,7 @@ namespace Elavora\Api\Extension\LogStdout;
 use Elavora\Api\Extension\LogStdout\Contracts\LogWriter;
 use Closure;
 use JsonException;
+use RuntimeException;
 
 final class StdoutLogWriter implements LogWriter
 {
@@ -22,7 +23,14 @@ final class StdoutLogWriter implements LogWriter
         $this->writeLine = Closure::fromCallable(
             $writeLine ?? static function (string $line) use ($config): void {
                 $target = $config->stream() === 'stderr' ? 'php://stderr' : 'php://stdout';
-                file_put_contents($target, $line . PHP_EOL);
+                $line .= PHP_EOL;
+                $writtenBytes = @file_put_contents($target, $line);
+
+                if ($writtenBytes === false || $writtenBytes !== strlen($line)) {
+                    throw new RuntimeException(
+                        "Nao foi possivel gravar o log em {$config->stream()}."
+                    );
+                }
             }
         );
     }

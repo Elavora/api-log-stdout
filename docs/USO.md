@@ -1,51 +1,27 @@
 # Guia de uso
 
-Pacote opcional de logs em `stdout` ou `stderr` para o framework Elavora.
-
-## Instalacao
-
-```bash
-composer require elavora/api-log-stdout
-```
-
-## Quando usar
-
-- Enviar logs para stdout, arquivo ou MongoDB sem trocar a aplicacao.
-- Registrar um writer compativel com o logger do framework.
-- Padronizar observabilidade por ambiente.
-
-## Exemplo rapido
+Use `stdout` para coleta normal do runtime ou `stderr` quando a plataforma separar erros.
 
 ```php
 use Elavora\Api\Extension\LogStdout\StdoutLogExtension;
+use Elavora\Api\Framework\Application;
+use Elavora\Api\Framework\Logging\Logger;
 
-$application->extend(new StdoutLogExtension([
-    // Ajuste as opcoes conforme o destino de log escolhido.
+$application = Application::create()->extend(new StdoutLogExtension([
+    'stream' => 'stderr',
 ]));
+
+$logger = $application->container()->get(Logger::class);
+$logger->error('Servico indisponivel', ['service' => 'billing']);
 ```
 
-## Principais pontos de entrada
+O writer preserva o callback injetavel para integracoes customizadas. No writer nativo, a linha JSON termina com `PHP_EOL` e qualquer falha de escrita e propagada.
 
-- `Elavora\Api\Extension\LogStdout\StdoutLogConfig`
-- `Elavora\Api\Extension\LogStdout\StdoutLogExtension`
-- `Elavora\Api\Extension\LogStdout\StdoutLogWriter`
-- `Elavora\Api\Extension\LogStdout\Contracts\LogWriter`
+## Validacao do pacote
 
-## Dependencias de runtime
-
-- `elavora/api-framework` `^0.3.1`
-
-## Validacao no projeto consumidor
-
-Depois de instalar o pacote, rode os testes da aplicacao consumidora. Para uma verificacao isolada do pacote, use container:
+Execute a partir da raiz do clone:
 
 ```bash
-docker run --rm -v "${PWD}:/workspace" -w "/workspace/api-log-stdout" composer:2 composer validate --strict --no-check-publish
-docker run --rm -v "${PWD}:/workspace" -w "/workspace/api-log-stdout" composer:2 sh -lc "find . \\( -path ./.git -o -path ./vendor \\) -prune -o -name '*.php' -print0 | xargs -0 -r -n1 php -l"
+docker run --rm -v "${PWD}:/workspace" -w /workspace composer:2 composer update --no-interaction --no-progress --prefer-dist
+docker run --rm -v "${PWD}:/workspace" -w /workspace composer:2 composer check
 ```
-
-## Observacoes
-
-- Mantenha regras de produto fora deste pacote.
-- Prefira configurar extensoes no bootstrap da aplicacao.
-- Instale apenas os modulos que a aplicacao realmente usa.

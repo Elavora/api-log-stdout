@@ -15,7 +15,7 @@ final class StdoutLogConfig
     /**
      * Cria a configuracao a partir de array.
      *
-     * @param array{stream?: string} $config
+     * @param array{stream?: mixed} $config
      */
     public static function fromArray(array $config = []): self
     {
