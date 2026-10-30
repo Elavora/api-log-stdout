@@ -8,9 +8,7 @@ use InvalidArgumentException;
 
 final class StdoutLogConfig
 {
-    private function __construct(private readonly string $stream)
-    {
-    }
+    private function __construct(private readonly string $stream) {}
 
     /**
      * Cria a configuracao a partir de array.
