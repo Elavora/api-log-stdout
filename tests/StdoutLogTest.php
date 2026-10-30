@@ -20,7 +20,7 @@ final class StdoutLogTest extends TestCase
             StdoutLogConfig::fromArray(['stream' => 'stderr']),
             static function (string $line) use (&$lines): void {
                 $lines[] = $line;
-            }
+            },
         );
 
         $writer->write(['message' => 'teste', 'level' => 'info']);
@@ -32,13 +32,11 @@ final class StdoutLogTest extends TestCase
     public function testExtensionRegistersLocalAndFrameworkContracts(): void
     {
         $fakeWriter = new class implements LogWriter {
-            public function write(array $entry): void
-            {
-            }
+            public function write(array $entry): void {}
         };
         $application = Application::create()->extend(new StdoutLogExtension(
             ['stream' => 'stdout'],
-            static fn (StdoutLogConfig $config): LogWriter => $fakeWriter
+            static fn(StdoutLogConfig $config): LogWriter => $fakeWriter,
         ));
 
         self::assertSame($fakeWriter, $application->container()->get(LogWriter::class));
@@ -49,18 +47,16 @@ final class StdoutLogTest extends TestCase
     public function testReusesSameWriterInstanceForLocalAndFrameworkContracts(): void
     {
         $fakeWriter = new class implements LogWriter {
-            public function write(array $entry): void
-            {
-            }
+            public function write(array $entry): void {}
         };
         $application = Application::create()->extend(new StdoutLogExtension(
             ['stream' => 'stdout'],
-            static fn (StdoutLogConfig $config): LogWriter => $fakeWriter
+            static fn(StdoutLogConfig $config): LogWriter => $fakeWriter,
         ));
 
         self::assertSame(
             $application->container()->get(LogWriter::class),
-            $application->container()->get(FrameworkLogWriter::class)
+            $application->container()->get(FrameworkLogWriter::class),
         );
     }
 }

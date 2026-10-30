@@ -23,7 +23,7 @@ final class StdoutLogWriter implements LogWriter
             $writeLine ?? static function (string $line) use ($config): void {
                 $target = $config->stream() === 'stderr' ? 'php://stderr' : 'php://stdout';
                 file_put_contents($target, $line . PHP_EOL);
-            }
+            },
         );
     }
 

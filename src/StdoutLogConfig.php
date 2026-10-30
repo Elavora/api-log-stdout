@@ -8,9 +8,7 @@ use InvalidArgumentException;
 
 final class StdoutLogConfig
 {
-    private function __construct(private readonly string $stream)
-    {
-    }
+    private function __construct(private readonly string $stream) {}
 
     /**
      * Cria a configuracao a partir de array.
@@ -20,7 +18,7 @@ final class StdoutLogConfig
     public static function fromArray(array $config = []): self
     {
         $stream = $config['stream'] ?? 'stdout';
-        if (!is_string($stream) || !in_array($stream, ['stdout', 'stderr'], true)) {
+        if (!in_array($stream, ['stdout', 'stderr'], true)) {
             throw new InvalidArgumentException('O stream de log deve ser stdout ou stderr.');
         }
 
